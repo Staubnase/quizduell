@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
 public class QuestionDB {
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/quizduelldb";
     private static final String DATABASE_USER = "root";
@@ -20,6 +22,10 @@ public class QuestionDB {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public QuestionDB(DriverManagerDataSource dataSource) {
+        //TODO Auto-generated constructor stub
     }
 
     public void addQuestion(Question question) {
