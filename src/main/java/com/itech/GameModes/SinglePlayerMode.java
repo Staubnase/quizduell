@@ -13,6 +13,10 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Represents the single player game mode in the quiz game.
+ * Implements the {@link IGameMode} interface.
+ */
 public class SinglePlayerMode implements IGameMode {
     private QuestionDB questionDB;
     private Player player;
@@ -22,6 +26,13 @@ public class SinglePlayerMode implements IGameMode {
     private int currentQuestionIndex = 0;
     private int totalQuestions = 10;
 
+    /**
+     * Constructs a new SinglePlayerMode object.
+     * 
+     * @param questionDB the QuestionDB object to retrieve questions from
+     * @param player the Player object representing the player in the game
+     * @param ui the IGraphicalUI object for displaying the game UI
+     */
     public SinglePlayerMode(QuestionDB questionDB, Player player, IGraphicalUI ui) {
         this.questionDB = questionDB;
         this.player = player;
@@ -31,13 +42,20 @@ public class SinglePlayerMode implements IGameMode {
         Collections.shuffle(this.questions); // Mischen der Fragenliste
     }
 
-
+    /**
+     * Starts the single player game.
+     * Calls the presentNextQuestion() method to present the first question.
+     */
     @Override
     public void startGame() {
         presentNextQuestion();
     }
 
-    // Diese Methode ersetzt die beiden überladenen presentQuestion-Methoden.
+    /**
+     * Presents the next question to the player.
+     * If there are more questions available, it shows the question and increments the currentQuestionIndex.
+     * If all questions have been answered, it calls the endGame() method.
+     */
     private void presentNextQuestion() {
         if (currentQuestionIndex < totalQuestions && currentQuestionIndex < questions.size()) {
             Question question = questions.get(currentQuestionIndex);
@@ -48,6 +66,14 @@ public class SinglePlayerMode implements IGameMode {
         }
     }
 
+    /**
+     * Checks the player's answer for the current question.
+     * If the answer is correct, it updates the player's score and shows a message dialog.
+     * If there are more questions available, it calls the presentNextQuestion() method.
+     * If all questions have been answered, it calls the endGame() method.
+     * 
+     * @param answerIndex the index of the selected answer
+     */
     public void checkAnswer(int answerIndex) {
         Question currentQuestion = questions.get(currentQuestionIndex - 1); // da currentQuestionIndex bereits inkrementiert wurde
         if (currentQuestion.isCorrectAnswer(answerIndex)) {
@@ -64,6 +90,10 @@ public class SinglePlayerMode implements IGameMode {
         }
     }
 
+    /**
+     * Ends the single player game.
+     * Shows the player's score, adds the player to the leaderboard, and shows the game menu.
+     */
     @Override
     public void endGame() {
         ui.showResults(player.getScore());
@@ -72,7 +102,12 @@ public class SinglePlayerMode implements IGameMode {
         ui.showMenu();
     }
 
-    // Diese Methode wird nicht mehr benötigt und kann entfernt oder als deprecated markiert werden.
+    /**
+     * This method is no longer needed and can be removed or marked as deprecated.
+     * 
+     * @param questionIndex the index of the question to present
+     * @deprecated This method is no longer used.
+     */
     @Override
     public void presentQuestion(int questionIndex) {
         // Wird nicht verwendet.

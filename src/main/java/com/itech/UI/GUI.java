@@ -14,7 +14,11 @@ import com.itech.interfaces.IGameMode;
 import com.itech.interfaces.IGraphicalUI;
 import java.util.List;
 
-
+/**
+ * The GUI class represents the graphical user interface for the Quizduell game.
+ * It extends the JFrame class and implements the IGraphicalUI interface.
+ * The GUI class is responsible for displaying the main menu, questions, and managing player interactions.
+ */
 public class GUI extends JFrame implements IGraphicalUI {
     private JPanel mainPanel;
     private JPanel questionPanel; // Panel für Fragen
@@ -31,7 +35,7 @@ public class GUI extends JFrame implements IGraphicalUI {
 
     public GUI() {
         this.leaderboard = new Leaderboard();
-        this.questionDB = new QuestionDB(); // Stellen Sie sicher, dass dies Ihren Anforderungen entspricht
+        this.questionDB = new QuestionDB();
         initializeUI();
     }
 
@@ -194,210 +198,190 @@ public class GUI extends JFrame implements IGraphicalUI {
     @Override
     public void showQuestion(Question question, int questionNumber, Player currentPlayer) {
         questionLabel.setText("Frage " + (questionNumber + 1) + ": " + question.getQuestionText());
-        currentPlayerLabel.setText("Aktueller Spieler: " + currentPlayer.getUsername()); // Aktuellen Spieler aktualisieren
+        currentPlayerLabel.setText("Aktueller Spieler: " + currentPlayer.getUsername());
         for (int i = 0; i < optionButtons.length; i++) {
             optionButtons[i].setText(question.getOptions()[i]);
             optionButtons[i].setVisible(true);
-            optionButtons[i].setSelected(false); // Deselektieren aller Optionen
+            optionButtons[i].setSelected(false);
         }
         submitButton.setVisible(true);
-    
-        // Wechseln der angezeigten Panels
+
         menuPanel.setVisible(false);
         questionPanel.setVisible(true);
         mainPanel.add(questionPanel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
-    }
-    
-
-    @Override
-    public void showMenu() {
-        questionPanel.setVisible(false);
-        menuPanel.setVisible(true);
-        mainPanel.revalidate();
-        mainPanel.repaint();
-    }
-
-    @Override
-    public void showLeaderboard(Leaderboard leaderboard) {
-        if (leaderboard == null) {
-            JOptionPane.showMessageDialog(this, "Die Rangliste ist derzeit nicht verfügbar.");
-            return;
         }
-    
-        // Annahme: Die Methode getFormattedLeaderboard gibt einen formatierten String der Rangliste zurück.
-        // Stellen Sie sicher, dass diese Methode existiert und korrekt implementiert ist.
-        String leaderboardText = leaderboard.getFormattedLeaderboard();
-        
-        if (leaderboardText == null || leaderboardText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Die Rangliste ist leer.");
-        } else {
-            // Erstellen eines neuen Fensters oder eines Dialogs zur Anzeige der Rangliste
-            JFrame leaderboardFrame = new JFrame("Rangliste");
-            JTextArea textArea = new JTextArea(leaderboardText);
-            textArea.setEditable(false); // Der Text sollte nicht editierbar sein
-            JScrollPane scrollPane = new JScrollPane(textArea); // Ermöglicht Scrollen, falls der Text lang ist
-            leaderboardFrame.add(scrollPane);
-            leaderboardFrame.setSize(400, 600); // Passen Sie die Größe nach Bedarf an
-            leaderboardFrame.setLocationRelativeTo(null); // Zentriert das Fenster
-            leaderboardFrame.setVisible(true);
-        }
-    }
 
-    @Override
-    public void managePlayers() {
-        // Erstellen eines neuen JDialogs als Sub-Fenster
-        JDialog managePlayersDialog = new JDialog(this, "Spieler verwalten", true);
-        managePlayersDialog.setLayout(new BorderLayout());
-    
-        // Erstellen eines Panels für die Buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
-    
-        JButton addButton = new JButton("Spieler hinzufügen");
-        JButton deleteButton = new JButton("Spieler löschen");
-        JButton listButton = new JButton("Alle Spieler anzeigen");
-        JButton closeButton = new JButton("Schließen");
-    
-        // Button-Aktionen hinzufügen
-        addButton.addActionListener(e -> addPlayer());
-        deleteButton.addActionListener(e -> deletePlayer());
-        listButton.addActionListener(e -> listPlayers());
-        closeButton.addActionListener(e -> managePlayersDialog.dispose()); // Schließt das Dialogfenster
-    
-        // Buttons zum Panel hinzufügen
-        buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(listButton);
-        buttonPanel.add(closeButton);
-    
-        // Panel zum Dialog hinzufügen
-        managePlayersDialog.add(buttonPanel, BorderLayout.CENTER);
-        managePlayersDialog.pack();
-        managePlayersDialog.setLocationRelativeTo(this); // Zentriert das Fenster relativ zum Hauptfenster
-        managePlayersDialog.setVisible(true); // Zeigt das Dialogfenster an
-    }
-    
-    private void addPlayer() {
-        String playerName = JOptionPane.showInputDialog(this, "Spielername:");
-        if (playerName != null && !playerName.trim().isEmpty()) {
-            Player newPlayer = new Player(playerName.trim());
-            registeredPlayers.put(playerName.trim(), newPlayer);
-            JOptionPane.showMessageDialog(this, playerName + " hinzugefügt.");
-        }
-    }
-    
-    private void deletePlayer() {
-        String playerName = JOptionPane.showInputDialog(this, "Zu löschender Spielername:");
-        // Überprüfen, ob der Dialog abgebrochen wurde (playerName ist null) oder der Name leer ist
-        if (playerName == null || playerName.trim().isEmpty()) {
-            // Wenn abgebrochen oder leer, dann tue nichts oder zeige eine angepasste Nachricht
-            return;
-        } else if (registeredPlayers.remove(playerName.trim()) != null) {
-            // Wenn der Spieler gefunden und gelöscht wurde
-            JOptionPane.showMessageDialog(this, playerName + " gelöscht.");
-        } else {
-            // Wenn der Spielername nicht in der Liste gefunden wurde
-            JOptionPane.showMessageDialog(this, "Spieler nicht gefunden.");
-        }
-    }
-    
-    
-    private void listPlayers() {
-        StringBuilder playersList = new StringBuilder("Registrierte Spieler:\n");
-        registeredPlayers.keySet().forEach(name -> playersList.append(name).append("\n"));
-        JOptionPane.showMessageDialog(this, playersList.toString());
-    }
 
-    @Override
-    public void showResults(int score) {
-        JOptionPane.showMessageDialog(this, "Das Spiel ist vorbei. Ihre Punktzahl: " + score);
-    }
-
-    private void manageQuestions() {
-        // Erstellen eines Dialogs oder eines neuen Fensters für die Fragenverwaltung
-        JDialog questionsManagementDialog = new JDialog(this, "Fragen verwalten", true);
-        questionsManagementDialog.setLayout(new BorderLayout());
-    
-        // Erstellen der Buttons für die verschiedenen Aktionen
-        JButton showQuestionsButton = new JButton("Fragen anzeigen");
-        JButton addQuestionButton = new JButton("Frage hinzufügen");
-        JButton deleteQuestionButton = new JButton("Frage löschen");
-        JButton closeButton = new JButton("Schließen");
-    
-        // Button-Aktionen hinzufügen
-        showQuestionsButton.addActionListener(e -> showQuestions());
-        addQuestionButton.addActionListener(e -> addQuestion());
-        deleteQuestionButton.addActionListener(e -> deleteQuestion());
-        closeButton.addActionListener(e -> questionsManagementDialog.dispose());
-    
-        // Panel für die Buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.add(showQuestionsButton);
-        buttonPanel.add(addQuestionButton);
-        buttonPanel.add(deleteQuestionButton);
-        buttonPanel.add(closeButton);
-    
-        questionsManagementDialog.add(buttonPanel, BorderLayout.CENTER);
-        questionsManagementDialog.pack();
-        questionsManagementDialog.setLocationRelativeTo(this);
-        questionsManagementDialog.setVisible(true);
-    }
-    
-    // Methoden für Anzeigen, Hinzufügen und Löschen von Fragen implementieren // Stellen Sie sicher, dass Sie eine Instanz von QuestionDB haben
-
-    private void showQuestions() {
-        List<Question> questions = questionDB.getAllQuestions();
-        StringBuilder questionsList = new StringBuilder("Verfügbare Fragen:\n");
-        for (Question question : questions) {
-            questionsList.append("ID: ").append(question.getId()).append(", ");
-            questionsList.append("Frage: ").append(question.getQuestionText()).append("\n");
+        @Override
+        public void showMenu() {
+            questionPanel.setVisible(false);
+            menuPanel.setVisible(true);
+            mainPanel.revalidate();
+            mainPanel.repaint();
         }
-        JOptionPane.showMessageDialog(this, questionsList.toString());
-    }
-    
-    private void addQuestion() {
-        JTextField questionText = new JTextField();
-        JTextField answer1 = new JTextField();
-        JTextField answer2 = new JTextField();
-        JTextField answer3 = new JTextField();
-        JTextField answer4 = new JTextField();
-        JTextField correctAnswer = new JTextField();
-        Object[] message = {
-            "Frage:", questionText,
-            "Antwort 1:", answer1,
-            "Antwort 2:", answer2,
-            "Antwort 3:", answer3,
-            "Antwort 4:", answer4,
-            "Richtige Antwort (1-4):", correctAnswer
-        };
-    
-        int option = JOptionPane.showConfirmDialog(null, message, "Neue Frage hinzufügen", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            try {
-                String[] options = {answer1.getText(), answer2.getText(), answer3.getText(), answer4.getText()};
-                int correctAnswerIndex = Integer.parseInt(correctAnswer.getText()) - 1; // Benutzer gibt 1-4 ein, wir speichern als 0-3
-                // Da die ID automatisch von der Datenbank generiert wird, setzen wir sie hier auf null
-                Question question = new Question(null, questionText.getText(), options, correctAnswerIndex);
-                questionDB.addQuestion(question);
-                JOptionPane.showMessageDialog(this, "Frage hinzugefügt");
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Bitte geben Sie eine gültige Nummer für die richtige Antwort ein.", "Fehler", JOptionPane.ERROR_MESSAGE);
+
+        @Override
+        public void showLeaderboard(Leaderboard leaderboard) {
+            if (leaderboard == null) {
+                JOptionPane.showMessageDialog(this, "Die Rangliste ist derzeit nicht verfügbar.");
+                return;
+            }
+
+            String leaderboardText = leaderboard.getFormattedLeaderboard();
+
+            if (leaderboardText == null || leaderboardText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Die Rangliste ist leer.");
+            } else {
+                JFrame leaderboardFrame = new JFrame("Rangliste");
+                JTextArea textArea = new JTextArea(leaderboardText);
+                textArea.setEditable(false);
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                leaderboardFrame.add(scrollPane);
+                leaderboardFrame.setSize(400, 600);
+                leaderboardFrame.setLocationRelativeTo(null);
+                leaderboardFrame.setVisible(true);
             }
         }
-    }
-    
-    
-    
-    private void deleteQuestion() {
-        String questionIdStr = JOptionPane.showInputDialog("Frage ID zum Löschen:");
-        if (questionIdStr != null && !questionIdStr.trim().isEmpty()) {
-            int questionId = Integer.parseInt(questionIdStr);
-            questionDB.removeQuestion(questionId);
-            JOptionPane.showMessageDialog(this, "Frage gelöscht");
-        }
-    }
 
-}
+        @Override
+        public void managePlayers() {
+            JDialog managePlayersDialog = new JDialog(this, "Spieler verwalten", true);
+            managePlayersDialog.setLayout(new BorderLayout());
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout());
+
+            JButton addButton = new JButton("Spieler hinzufügen");
+            JButton deleteButton = new JButton("Spieler löschen");
+            JButton listButton = new JButton("Alle Spieler anzeigen");
+            JButton closeButton = new JButton("Schließen");
+
+            addButton.addActionListener(e -> addPlayer());
+            deleteButton.addActionListener(e -> deletePlayer());
+            listButton.addActionListener(e -> listPlayers());
+            closeButton.addActionListener(e -> managePlayersDialog.dispose());
+
+            buttonPanel.add(addButton);
+            buttonPanel.add(deleteButton);
+            buttonPanel.add(listButton);
+            buttonPanel.add(closeButton);
+
+            managePlayersDialog.add(buttonPanel, BorderLayout.CENTER);
+            managePlayersDialog.pack();
+            managePlayersDialog.setLocationRelativeTo(this);
+            managePlayersDialog.setVisible(true);
+        }
+
+        private void addPlayer() {
+            String playerName = JOptionPane.showInputDialog(this, "Spielername:");
+            if (playerName != null && !playerName.trim().isEmpty()) {
+                Player newPlayer = new Player(playerName.trim());
+                registeredPlayers.put(playerName.trim(), newPlayer);
+                JOptionPane.showMessageDialog(this, playerName + " hinzugefügt.");
+            }
+        }
+
+        private void deletePlayer() {
+            String playerName = JOptionPane.showInputDialog(this, "Zu löschender Spielername:");
+            if (playerName == null || playerName.trim().isEmpty()) {
+                return;
+            } else if (registeredPlayers.remove(playerName.trim()) != null) {
+                JOptionPane.showMessageDialog(this, playerName + " gelöscht.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Spieler nicht gefunden.");
+            }
+        }
+
+
+        private void listPlayers() {
+            StringBuilder playersList = new StringBuilder("Registrierte Spieler:\n");
+            registeredPlayers.keySet().forEach(name -> playersList.append(name).append("\n"));
+            JOptionPane.showMessageDialog(this, playersList.toString());
+        }
+
+        @Override
+        public void showResults(int score) {
+            JOptionPane.showMessageDialog(this, "Das Spiel ist vorbei. Ihre Punktzahl: " + score);
+        }
+
+        private void manageQuestions() {
+            JDialog questionsManagementDialog = new JDialog(this, "Fragen verwalten", true);
+            questionsManagementDialog.setLayout(new BorderLayout());
+
+            JButton showQuestionsButton = new JButton("Fragen anzeigen");
+            JButton addQuestionButton = new JButton("Frage hinzufügen");
+            JButton deleteQuestionButton = new JButton("Frage löschen");
+            JButton closeButton = new JButton("Schließen");
+
+            showQuestionsButton.addActionListener(e -> showQuestions());
+            addQuestionButton.addActionListener(e -> addQuestion());
+            deleteQuestionButton.addActionListener(e -> deleteQuestion());
+            closeButton.addActionListener(e -> questionsManagementDialog.dispose());
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout());
+            buttonPanel.add(showQuestionsButton);
+            buttonPanel.add(addQuestionButton);
+            buttonPanel.add(deleteQuestionButton);
+            buttonPanel.add(closeButton);
+
+            questionsManagementDialog.add(buttonPanel, BorderLayout.CENTER);
+            questionsManagementDialog.pack();
+            questionsManagementDialog.setLocationRelativeTo(this);
+            questionsManagementDialog.setVisible(true);
+        }
+
+        private void showQuestions() {
+            List<Question> questions = questionDB.getAllQuestions();
+            StringBuilder questionsList = new StringBuilder("Verfügbare Fragen:\n");
+            for (Question question : questions) {
+                questionsList.append("ID: ").append(question.getId()).append(", ");
+                questionsList.append("Frage: ").append(question.getQuestionText()).append("\n");
+            }
+            JOptionPane.showMessageDialog(this, questionsList.toString());
+        }
+
+        private void addQuestion() {
+            JTextField questionText = new JTextField();
+            JTextField answer1 = new JTextField();
+            JTextField answer2 = new JTextField();
+            JTextField answer3 = new JTextField();
+            JTextField answer4 = new JTextField();
+            JTextField correctAnswer = new JTextField();
+            Object[] message = {
+                "Frage:", questionText,
+                "Antwort 1:", answer1,
+                "Antwort 2:", answer2,
+                "Antwort 3:", answer3,
+                "Antwort 4:", answer4,
+                "Richtige Antwort (1-4):", correctAnswer
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Neue Frage hinzufügen", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                try {
+                    String[] options = {answer1.getText(), answer2.getText(), answer3.getText(), answer4.getText()};
+                    int correctAnswerIndex = Integer.parseInt(correctAnswer.getText()) - 1;
+                    Question question = new Question(null, questionText.getText(), options, correctAnswerIndex);
+                    questionDB.addQuestion(question);
+                    JOptionPane.showMessageDialog(this, "Frage hinzugefügt");
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Bitte geben Sie eine gültige Nummer für die richtige Antwort ein.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+
+
+        private void deleteQuestion() {
+            String questionIdStr = JOptionPane.showInputDialog("Frage ID zum Löschen:");
+            if (questionIdStr != null && !questionIdStr.trim().isEmpty()) {
+                int questionId = Integer.parseInt(questionIdStr);
+                questionDB.removeQuestion(questionId);
+                JOptionPane.showMessageDialog(this, "Frage gelöscht");
+            }
+        }
+
+        }

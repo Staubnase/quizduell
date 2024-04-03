@@ -16,6 +16,10 @@ import com.itech.classes.QuestionDB;
 import com.itech.interfaces.IGameMode;
 import com.itech.interfaces.IGraphicalUI;
 
+/**
+ * The main class for the QuizDuell application.
+ * This class handles the game flow and user interactions.
+ */
 public class QuizDuellApp {
     private static final Scanner scanner = new Scanner(System.in);
     private static final QuestionDB questionDB = new QuestionDB();
@@ -23,6 +27,15 @@ public class QuizDuellApp {
     private static final Leaderboard leaderboard = new Leaderboard();
     private static final Map<String, Player> registeredPlayers = new HashMap<>();
 
+    /**
+     * The main method is the entry point of the QuizDuellApp application.
+     * It prompts the user to choose between playing in the console or GUI mode,
+     * and then presents a menu of options for the user to choose from.
+     * Based on the user's choice, it creates the appropriate user interface (UI) object
+     * and starts the game loop until the user chooses to exit.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         System.out.println("Willkommen bei Quizduell!");
         System.out.println("Möchten Sie in der Konsole (C) oder im GUI (G) spielen?");
@@ -47,7 +60,7 @@ public class QuizDuellApp {
                     Player singlePlayer = getOrCreatePlayer(scanner, registeredPlayers);
                     IGameMode singlePlayerMode = new SinglePlayerMode(questionDB, singlePlayer, ui);
                     singlePlayerMode.startGame();
-                    leaderboard.addPlayer(singlePlayer);
+                    Leaderboard.addPlayer(singlePlayer);
                     System.out.println("");
                     break;
                 case 2: // Mehrspieler
@@ -58,8 +71,8 @@ public class QuizDuellApp {
                     Player player2 = getOrCreatePlayer(scanner, registeredPlayers);
                     IGameMode multiplayerMode = new MultiPlayerMode(questionDB, player1, player2, ui);
                     multiplayerMode.startGame();
-                    leaderboard.addPlayer(player1);
-                    leaderboard.addPlayer(player2);
+                    Leaderboard.addPlayer(player1);
+                    Leaderboard.addPlayer(player2);
                     System.out.println("");
                     break;
                 case 3: // Rangliste anzeigen
@@ -89,6 +102,11 @@ public class QuizDuellApp {
         scanner.close();
     }
 
+    /**
+     * Manages the questions in the quiz application.
+     * Allows the user to add, remove, and display questions.
+     * Returns to the main menu when the user chooses to exit.
+     */
      private static void manageQuestions() {
         boolean managing = true;
 
@@ -121,6 +139,14 @@ public class QuizDuellApp {
         }
     }
 
+    /**
+     * Adds a new question to the quiz database.
+     * 
+     * This method prompts the user to enter a question, four answer options, and the number of the correct answer.
+     * It then creates a new Question object with the provided information and adds it to the question database.
+     * 
+     * @throws NoSuchElementException if the input is invalid or incomplete
+     */
     private static void addQuestion() {
         System.out.print("Geben Sie die Frage ein: ");
         String questionText = scanner.nextLine();
@@ -133,22 +159,31 @@ public class QuizDuellApp {
 
         System.out.print("Geben Sie die Nummer der richtigen Antwort (1-4) ein: ");
         int correctAnswer = scanner.nextInt() - 1;
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Question question = new Question(null, questionText, options, correctAnswer);
         questionDB.addQuestion(question);
         System.out.println("Frage erfolgreich hinzugefügt.");
     }
 
+    /**
+     * Removes a question from the question database.
+     * 
+     * This method prompts the user to enter the ID of the question to be removed.
+     * It then calls the `removeQuestion` method of the `questionDB` object to remove the question.
+     * After successful removal, it prints a success message.
+     */
     private static void removeQuestion() {
         System.out.print("Geben Sie die ID der zu entfernenden Frage ein: ");
         int questionId = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
+        scanner.nextLine();
         questionDB.removeQuestion(questionId);
         System.out.println("Frage erfolgreich entfernt.");
     }
 
+    /**
+     * Displays all the questions in the question database.
+     */
     private static void showAllQuestions() {
         List<Question> questions = questionDB.getAllQuestions();
         System.out.println("Alle Fragen:");
@@ -164,6 +199,10 @@ public class QuizDuellApp {
         }
     }
 
+    /**
+     * Manages the players in the QuizDuellApp.
+     * Allows the user to add, delete, or display all players.
+     */
     private static void managePlayers() {
         System.out.println("");
         System.out.println("1. Spieler hinzufügen");
@@ -198,6 +237,9 @@ public class QuizDuellApp {
         }
     }
 
+    /**
+     * Represents a player in the QuizDuell game.
+     */
     private static Player getOrCreatePlayer(Scanner scanner, Map<String, Player> registeredPlayers) {
         System.out.print("Bitte geben Sie Ihren Benutzernamen ein: ");
         String username = scanner.next().trim();

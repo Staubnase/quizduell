@@ -5,17 +5,34 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * The Leaderboard class represents a leaderboard that keeps track of players and their scores.
+ */
 public class Leaderboard {
     private static List<Player> players = new ArrayList<>();
 
+    /**
+     * Adds a player to the leaderboard.
+     *
+     * @param player The player to be added.
+     */
     public static void addPlayer(Player player) {
         players.add(player);
     }
 
+    /**
+     * Removes a player from the leaderboard.
+     *
+     * @param player The player to be removed.
+     */
     public void removePlayer(Player player) {
         players.remove(player);
     }
 
+    /**
+     * Displays the leaderboard in the console.
+     * The leaderboard is sorted in descending order based on the players' scores.
+     */
     public void displayLeaderboard() {
         System.out.println("Rangliste:");
         Collections.sort(players, new Comparator<Player>() {
@@ -28,6 +45,12 @@ public class Leaderboard {
             System.out.println(player.getUsername() + ": " + player.getScore() + " Punkte");
         }
     }
+    
+    /**
+     * Returns a formatted leaderboard string.
+     *
+     * @return The formatted leaderboard string.
+     */
     public String getFormattedLeaderboard() {
         StringBuilder leaderboardString = new StringBuilder();
         // Sortieren der Spieler nach ihrer Punktzahl in absteigender Reihenfolge
