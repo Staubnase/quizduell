@@ -24,7 +24,7 @@ public class QuestionDB {
         }
     }
 
-    public QuestionDB(DriverManagerDataSource dataSource) {
+    public QuestionDB() {
         //TODO Auto-generated constructor stub
     }
 

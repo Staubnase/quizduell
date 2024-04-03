@@ -19,15 +19,10 @@ public class QuestionDBTest {
 
     @BeforeEach
     void setUp() {
-        // Konfigurieren der DataSource für H2 In-Memory Datenbank
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
-
         // Initialisieren der QuestionDB mit der H2 DataSource
-        questionDB = new QuestionDB(dataSource);
+        questionDB = new QuestionDB();
+        questionDB.addQuestion(new Question(null, "Was ist die Hauptstadt von Frankreich?", new String[]{"Berlin", "Madrid", "Paris", "Rom"}, 2));
+        questionDB.addQuestion(new Question(null, "Wie viele Kontinente gibt es?", new String[]{"5", "6", "7", "8"}, 2));
         // Initialisieren der Datenbank mit erforderlichen Tabellen/Startdaten
     }
 
